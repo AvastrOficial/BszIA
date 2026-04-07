@@ -1,0 +1,174 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>BszIA · Multimental</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+</head>
+<body>
+<div class="bg-canvas"></div>
+
+<div id="loginScreen">
+    <div class="login-card">
+        <div class="login-logo">
+            <div class="login-icon-ring"><i class="fas fa-brain"></i></div>
+            <h1>BszIA</h1>
+            <p>Multimental · IA Platform</p>
+        </div>
+
+        <div id="panelLogin">
+            <div class="field">
+                <label>Correo electrónico</label>
+                <div class="field-wrap">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="loginEmail" placeholder="tu@correo.com">
+                </div>
+            </div>
+            <div class="field">
+                <label>Contraseña</label>
+                <div class="field-wrap">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="loginPassword" placeholder="••••••••">
+                </div>
+            </div>
+            <div class="field">
+                <label><i class="fas fa-shield-alt"></i> PIN de 4 dígitos</label>
+                <div class="pin-row" id="loginPinRow">
+                    <input class="pin-digit login-pin" type="password" maxlength="1" inputmode="numeric">
+                    <input class="pin-digit login-pin" type="password" maxlength="1" inputmode="numeric">
+                    <input class="pin-digit login-pin" type="password" maxlength="1" inputmode="numeric">
+                    <input class="pin-digit login-pin" type="password" maxlength="1" inputmode="numeric">
+                </div>
+            </div>
+            <button class="btn-login" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+            </button>
+            <div class="login-error" id="loginError"></div>
+            <div class="auth-toggle">
+                ¿No tienes cuenta?
+                <a onclick="showRegisterPanel()">Regístrate gratis</a>
+            </div>
+        </div>
+
+        <div id="panelRegister" style="display:none">
+            <div class="field">
+                <label>Nombre de usuario</label>
+                <div class="field-wrap">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="regUser" placeholder="tu_nombre" maxlength="30">
+                </div>
+            </div>
+            <div class="field">
+                <label>Correo electrónico</label>
+                <div class="field-wrap">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="regEmail" placeholder="tu@correo.com">
+                </div>
+            </div>
+            <div class="field">
+                <label>Contraseña <span style="color:var(--text2);font-size:0.65rem">(mín. 6 caracteres)</span></label>
+                <div class="field-wrap">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="regPassword" placeholder="••••••••">
+                </div>
+                <div class="password-strength"><div class="password-strength-fill" id="strengthFill"></div></div>
+                <div class="strength-label" id="strengthLabel"></div>
+            </div>
+            <div class="field">
+                <label>Confirmar contraseña</label>
+                <div class="field-wrap">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="regPasswordConfirm" placeholder="••••••••">
+                </div>
+            </div>
+            <div class="field">
+                <label><i class="fas fa-shield-alt"></i> PIN de seguridad (4 dígitos)</label>
+                <div class="pin-row" id="regPinRow">
+                    <input class="pin-digit reg-pin" type="password" maxlength="1" inputmode="numeric">
+                    <input class="pin-digit reg-pin" type="password" maxlength="1" inputmode="numeric">
+                    <input class="pin-digit reg-pin" type="password" maxlength="1" inputmode="numeric">
+                    <input class="pin-digit reg-pin" type="password" maxlength="1" inputmode="numeric">
+                </div>
+            </div>
+            <button class="btn-register" id="registerBtn">
+                <i class="fas fa-user-plus"></i> Crear cuenta
+            </button>
+            <div class="login-error" id="registerError"></div>
+            <div class="login-success" id="registerSuccess"></div>
+            <div class="auth-toggle">
+                ¿Ya tienes cuenta?
+                <a onclick="showLoginPanel()">Inicia sesión</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="appScreen">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <div class="header">
+        <button class="icon-btn" id="menuBtn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <div class="header-logo">BszIA</div>
+        <div class="header-user">
+            <span id="headerUsername"></span>
+            <span class="vip-badge" id="vipBadge"><i class="fas fa-crown"></i> VIP</span>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-top">
+                <button class="new-chat-btn" onclick="createNewChat()">
+                    <i class="fas fa-plus"></i> Nueva conversación
+                </button>
+            </div>
+            <ul class="chats-list" id="chatsList"></ul>
+            <div class="sidebar-bottom">
+                <button class="logout-btn" onclick="doLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                </button>
+            </div>
+        </aside>
+
+        <div class="chat-panel">
+            <div class="chat-toolbar">
+                <span class="chat-title-display" id="chatTitleDisplay">Chat</span>
+                <button class="tool-btn img-btn" onclick="generateImageFromBtn()">
+                    <i class="fas fa-image"></i> Generar Imagen
+                </button>
+            </div>
+
+            <div class="messages-area" id="messagesArea"></div>
+
+            <div class="input-zone">
+                <div class="input-box">
+                    <textarea id="userInput" rows="1" placeholder="Escribe tu mensaje... (Ej: 'genera imagen de un paisaje', 'código html para un login')"></textarea>
+                    <button class="send-btn" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-hints">
+                    <span class="hint-chip" onclick="setHint('genera imagen de ')">📷 Generar Imagen</span>
+                    <span class="hint-chip" onclick="setHint('explícame ')">💡 Explicar</span>
+                    <span class="hint-chip" onclick="setHint('escribe un poema sobre ')">✍️ Poema</span>
+                    <span class="hint-chip" onclick="setHint('código html para un login completo con css y js')">💻 Código</span>
+                </div>
+                <div class="usage-bar">
+                    <span id="usageText">0 / 50 hoy</span>
+                    <div class="usage-bar-track">
+                        <div class="usage-bar-fill" id="usageFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  </body>
+</html>
